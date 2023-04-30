@@ -15,8 +15,7 @@ namespace ariel
             throw std::invalid_argument("Denominator cannot be zero");
         }
 
-        
-     reduce();
+        reduce();
     }
 
     void Fraction::reduce()
@@ -46,60 +45,60 @@ namespace ariel
         return denominator;
     }
 
-  Fraction operator+(const Fraction &other, const Fraction &frac)
-{
-    long long num = (long long)other.numerator * frac.denominator + (long long)frac.numerator * other.denominator;
-    long long den = (long long)other.denominator * frac.denominator;
-    if (num > std::numeric_limits<int>::max() || num < std::numeric_limits<int>::min() || den > std::numeric_limits<int>::max() || den < std::numeric_limits<int>::min())
+    Fraction operator+(const Fraction &other, const Fraction &frac)
     {
-        throw std::overflow_error("Overflow in operator+");
+        long long num = (long long)other.numerator * frac.denominator + (long long)frac.numerator * other.denominator;
+        long long den = (long long)other.denominator * frac.denominator;
+        if (num > std::numeric_limits<int>::max() || num < std::numeric_limits<int>::min() || den > std::numeric_limits<int>::max() || den < std::numeric_limits<int>::min())
+        {
+            throw std::overflow_error("Overflow in operator+");
+        }
+        Fraction result((int)num, (int)den);
+        return result;
     }
-    Fraction result((int)num, (int)den);
-    return result;
-}
 
-   Fraction operator-(const Fraction &other, const Fraction &frac)
-{
-    long long num = (long long)other.numerator * frac.denominator - (long long)frac.numerator * other.denominator;
-    long long den = (long long)other.denominator * frac.denominator;
-    if (num > std::numeric_limits<int>::max() || num < std::numeric_limits<int>::min() || den > std::numeric_limits<int>::max() || den < std::numeric_limits<int>::min())
+    Fraction operator-(const Fraction &other, const Fraction &frac)
     {
-        throw std::overflow_error("Overflow in operator-");
+        long long num = (long long)other.numerator * frac.denominator - (long long)frac.numerator * other.denominator;
+        long long den = (long long)other.denominator * frac.denominator;
+        if (num > std::numeric_limits<int>::max() || num < std::numeric_limits<int>::min() || den > std::numeric_limits<int>::max() || den < std::numeric_limits<int>::min())
+        {
+            throw std::overflow_error("Overflow in operator-");
+        }
+        Fraction result((int)num, (int)den);
+        // result.reduce();
+        return result;
     }
-    Fraction result((int)num, (int)den);
-   // result.reduce();
-    return result;
-}
 
-Fraction operator*(const Fraction &other, const Fraction &frac)
-{
-    long long num = (long long)other.numerator * frac.numerator;
-    long long den = (long long)other.denominator * frac.denominator;
-    // check for overflow
-if (num > std::numeric_limits<int>::max() || num < std::numeric_limits<int>::min() || den > std::numeric_limits<int>::max() || den < std::numeric_limits<int>::min())
+    Fraction operator*(const Fraction &other, const Fraction &frac)
     {
-        throw std::overflow_error("Overflow in operator/");
+        long long num = (long long)other.numerator * frac.numerator;
+        long long den = (long long)other.denominator * frac.denominator;
+        // check for overflow
+        if (num > std::numeric_limits<int>::max() || num < std::numeric_limits<int>::min() || den > std::numeric_limits<int>::max() || den < std::numeric_limits<int>::min())
+        {
+            throw std::overflow_error("Overflow in operator*");
+        }
+        Fraction result((int)num, (int)den);
+        return result;
     }
-    Fraction result((int)num, (int)den);
-    return result;
-}
 
-
-   Fraction operator/(const Fraction &other, const Fraction &frac)
-{
-    if (frac == 0)
+    Fraction operator/(const Fraction &other, const Fraction &frac)
     {
-       throw std::runtime_error("Denominator cannot be zero");
+        if (frac == 0)
+        {
+            throw std::runtime_error("Denominator cannot be zero");
+        }
+        long long num = (long long)other.numerator * frac.denominator;
+        long long den = (long long)other.denominator * frac.numerator;
+        // all of this is to solve the problem of a max largest possible numerator and/or denominator - overflow 
+        if (num > std::numeric_limits<int>::max() || num < std::numeric_limits<int>::min() || den > std::numeric_limits<int>::max() || den < std::numeric_limits<int>::min())
+        {
+            throw std::overflow_error("Overflow in operator/");
+        }
+        Fraction result((int)num, (int)den);
+        return result;
     }
-    long long num = (long long)other.numerator * frac.denominator;
-    long long den = (long long)other.denominator * frac.numerator;
-    if (num > std::numeric_limits<int>::max() || num < std::numeric_limits<int>::min() || den > std::numeric_limits<int>::max() || den < std::numeric_limits<int>::min())
-    {
-        throw std::overflow_error("Overflow in operator/");
-    }
-    Fraction result((int)num, (int)den);
-    return result;
-}
     // Overloaded operator+ with Fraction and double operand
     Fraction operator+(const Fraction &other, double frac)
     {
@@ -231,31 +230,37 @@ if (num > std::numeric_limits<int>::max() || num < std::numeric_limits<int>::min
         ost << frac.getNumerator() << '/' << frac.getDenominator();
         return ost;
     }
-std::istream &operator>>(std::istream &ist, Fraction &frac)
-{
-    int n = 0, d = 1;
-    char c;
-
-    // Read the numerator
-    if (ist >> n)
+    std::istream &operator>>(std::istream &ist, Fraction &frac)
     {
-        // Check for zero numerator
-        if (n == 0)
-        {
-            frac = Fraction(0, 1);
-            return ist;
-        }
+        int n = 0, d = 1;
+        char c;
 
-        // Check for the '/' character
-        if (ist >> c && c == '/')
+        // Read the numerator
+        if (ist >> n)
         {
-            // Read the denominator
-            if (ist >> d)
+            // Check for zero numerator
+            if (n == 0)
             {
-                // Check for a valid denominator
-                if (d == 0)
+                frac = Fraction(0, 1);
+                return ist;
+            }
+
+            // Check for the '/' character
+            if (ist >> c && c == '/')
+            {
+                // Read the denominator
+                if (ist >> d)
                 {
-                    throw std::runtime_error("Denominator cannot be zero");
+                    // Check for a valid denominator
+                    if (d == 0)
+                    {
+                        throw std::runtime_error("Denominator cannot be zero");
+                    }
+                }
+                else
+                {
+                    // Invalid input format
+                    throw std::runtime_error("Invalid fraction format");
                 }
             }
             else
@@ -269,21 +274,14 @@ std::istream &operator>>(std::istream &ist, Fraction &frac)
             // Invalid input format
             throw std::runtime_error("Invalid fraction format");
         }
+
+        // Create the fraction
+        frac = Fraction(n, d);
+
+        // Clear any flags that may have been set
+        ist.clear();
+
+        return ist;
     }
-    else
-    {
-        // Invalid input format
-        throw std::runtime_error("Invalid fraction format");
-    }
-
-    // Create the fraction
-    frac = Fraction(n, d);
-
-    // Clear any flags that may have been set
-    ist.clear();
-
-    return ist;
-}
-
 
 }
