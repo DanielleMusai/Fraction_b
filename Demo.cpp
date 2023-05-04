@@ -24,7 +24,11 @@ int main() {
     cout << "a/b" << a/b << endl; 
     cout << "a*b" << a*b << endl; 
     cout << "2.3*b" << 2.3*b << endl; 
+//    cout << "3.4*b: " << 3.4*b << endl;//
+//    cout << "2.8*b: " << 2.8*b << endl;//
+//    cout << "4.7*b: " << 4.7*b << endl;//
     cout << "a+2.421" << a+2.421 << endl; 
+    //cout << "a+2.421" << a+3.67 << endl; 
     Fraction c = a+b-1;
     cout << c++ << endl;
     cout << --c << endl;
